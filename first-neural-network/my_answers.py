@@ -128,15 +128,17 @@ class NeuralNetwork(object):
             ---------
             features: 1D array of feature values
         '''
-
+        W_i2h = self.weights_input_to_hidden
+        W_h2o = self.weights_hidden_to_output
+        sigmoid = self.activation_function
         #### Implement the forward pass here ####
         # TODO: Hidden layer - replace these values with the appropriate calculations.
-        hidden_inputs = None # signals into hidden layer
-        hidden_outputs = None # signals from hidden layer
+        hidden_inputs = features # signals into hidden layer
+        hidden_outputs = sigmoid(np.dot(hidden_inputs, W_i2h)) # signals from hidden layer
 
         # TODO: Output layer - Replace these values with the appropriate calculations.
-        final_inputs = None # signals into final output layer
-        final_outputs = None # signals from final output layer
+        final_inputs = np.dot(hidden_outputs, W_h2o) # signals into final output layer
+        final_outputs = final_inputs # signals from final output layer
 
         return final_outputs
 
@@ -148,20 +150,3 @@ iterations = 100
 learning_rate = 0.1
 hidden_nodes = 2
 output_nodes = 1
-
-inputs = np.array([[0.5, -0.2, 0.1]])
-targets = np.array([[0.4]])
-test_w_i_h = np.array([[0.1, -0.2],
-                       [0.4, 0.5],
-                       [-0.3, 0.2]])
-test_w_h_o = np.array([[0.3],
-                       [-0.1]])
-
-network = NeuralNetwork(3, 2, 1, 0.5)
-network.weights_input_to_hidden = test_w_i_h.copy()
-network.weights_hidden_to_output = test_w_h_o.copy()
-network.forward_pass_train(inputs)
-network.train(inputs, targets)
-
-# print(network.weights_hidden_to_output)
-print(network.weights_input_to_hidden)
