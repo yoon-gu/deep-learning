@@ -87,22 +87,26 @@ class NeuralNetwork(object):
         '''
         #### Implement the backward pass here ####
         ### Backward pass ###
+        weights_input2hidden = self.weights_input_to_hidden
+        weights_hidden2output = self.weights_hidden_to_output
+        sigmoid = self.activation_function
 
         # TODO: Output error - Replace this value with your calculations.
         error = y - final_outputs # Output layer error is the difference between desired target and actual output.
 
         # TODO: Calculate the hidden layer's contribution to the error
-        hidden_error = None
+        hidden_error = np.dot(weights_hidden2output, error)
 
         # TODO: Backpropagated error terms - Replace these values with your calculations.
-        output_error_term = None
+        output_error_term = error
 
-        hidden_error_term = None
+        hidden_error_term = hidden_error * \
+                            sigmoid(hidden_outputs) * ( 1.0 - sigmoid(hidden_outputs))
 
         # Weight step (input to hidden)
-        delta_weights_i_h += None
+        delta_weights_i_h += self.lr * hidden_error_term * X[:, None]
         # Weight step (hidden to output)
-        delta_weights_h_o += None
+        delta_weights_h_o += self.lr * hidden_outputs[:,None] * output_error_term
         return delta_weights_i_h, delta_weights_h_o
 
     def update_weights(self, delta_weights_i_h, delta_weights_h_o, n_records):
@@ -145,3 +149,17 @@ iterations = 100
 learning_rate = 0.1
 hidden_nodes = 2
 output_nodes = 1
+
+inputs = np.array([[0.5, -0.2, 0.1]])
+targets = np.array([[0.4]])
+test_w_i_h = np.array([[0.1, -0.2],
+                       [0.4, 0.5],
+                       [-0.3, 0.2]])
+test_w_h_o = np.array([[0.3],
+                       [-0.1]])
+
+network = NeuralNetwork(3, 2, 1, 0.5)
+network.weights_input_to_hidden = test_w_i_h.copy()
+network.weights_hidden_to_output = test_w_h_o.copy()
+network.forward_pass_train(inputs)
+network.train(inputs, targets)
